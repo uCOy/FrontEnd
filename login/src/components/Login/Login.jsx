@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+import Alert from 'react-bootstrap/Alert';
 import { Container } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import './styles.css';
 import api from '../../services/api';
+import { useHistory } from 'react-router-dom';
 
 export function Login() {
+  const history = useHistory();  
+
   const [user, setUser] = useState({
     email: '',
     password: ''
@@ -42,9 +46,10 @@ export function Login() {
         type: 'success',
         mensagem: response.data.mensagem
       })
+      localStorage.setItem('token', JSON.stringify(response.data.token));
+      return history.push('/dashboard');
     }).catch((err) => {
       setStatus({
-        
           type: 'error',
           mensagem: 'Erro: tente mais tarde...'
       })
@@ -63,9 +68,22 @@ export function Login() {
         <div className="background">
           <Container className="box">
               <Form onSubmit={loginSubmit} className="borderForm">
-                {status.type == 'error' ? <p>{status.mensagem}</p>: ""}
-                {status.type == 'success' ? <p>{status.mensagem}</p>: ""}
-
+                {/* {status.type == 'error' ? <p>{status.mensagem}</p>: ""} */}
+                {/* {status.type == 'success' ? <p>{status.mensagem}</p>: ""} */}
+                {[
+        'success',
+      ].map((variant) => (
+        <p>
+          {status.type == 'success' ? <Alert key={variant} variant={variant}>{status.mensagem}</Alert>: ""}
+        </p>
+      ))}
+      {[
+        'danger',
+      ].map((variant) => (
+        <p>
+          {status.type == 'error' ? <Alert key={variant} variant={variant}>{status.mensagem}</Alert>: ""}
+        </p>
+      ))}
                 {status.loading ? <p>Validando...</p>: ""}
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>
@@ -83,9 +101,9 @@ export function Login() {
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">
                   <Form.Check type="checkbox" label="Check me out" />
                 </Form.Group>
-                <Button id="button" variant="primary" type="submit" >
-                  Submit
-                </Button>
+                {status.loading ? <Button id="button" variant="primary" disabled type="submit" >Acessando...</Button>
+                : <Button id="button" variant="primary" type="submit" >Acessar</Button>}
+                
               </Form>
           </Container>
         </div>
