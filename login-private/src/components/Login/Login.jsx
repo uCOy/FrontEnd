@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Alert from 'react-bootstrap/Alert';
 import { Container } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
@@ -7,8 +7,13 @@ import './styles.css';
 import api from '../../services/api';
 import { useHistory } from 'react-router-dom';
 
+import { Context } from '../../Context/AuthContext';
+
 export function Login() {
   const history = useHistory();  
+
+  const { authenticated, singIn } = useContext(Context);
+  console.log(`Situação do usuário na página Login: ${authenticated}`);
 
   const [user, setUser] = useState({
     email: '',
@@ -53,6 +58,8 @@ export function Login() {
       })
 
       localStorage.setItem('token', JSON.stringify(response.data.token));
+
+      singIn(true);
       
       return history.push('/dashboard');
 
