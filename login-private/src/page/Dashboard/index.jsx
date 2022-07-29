@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom'
 import { Context } from '../../Context/AuthContext'
 
 export const Dashboard = () => {
@@ -10,8 +11,16 @@ export const Dashboard = () => {
 
     return(
         <div>
+            <ul>
+                <li>
+                    <Link to="/dashboard">Dashboard</Link>
+                </li>
+                <li>
+                    <Link to="/usuarios">Usuários</Link>
+                </li>
+            </ul>
             <h1>Dashboard</h1>
-            <h6>Token: {token}</h6>
+            {/* <h6>Token: {token}</h6> */}
             <button type="button" onClick={handleLogout}>Sair</button>
         </div>
     )

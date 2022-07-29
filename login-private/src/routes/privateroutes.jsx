@@ -2,6 +2,10 @@ import React, { useContext } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import { Context } from '../Context/AuthContext';
+import { ListaUsuarios } from '../page/Usuarios/listaUsuarios';
+
+import { Login } from '../components/Login/Login';
+import { Dashboard } from '../page/Dashboard/index';
 
 function CustomRoute({ isPrivate, ...rest}){
 
@@ -18,6 +22,7 @@ export default function PrivateRoute(){
         <Switch>
               <CustomRoute exact path="/" component={Login} />
               <CustomRoute isPrivate path="/dashboard" component={Dashboard} />
+              <CustomRoute isPrivate path="/usuarios" component={ListaUsuarios} />
         </Switch>
     )
 }

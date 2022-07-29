@@ -57,7 +57,7 @@ export function Login() {
         mensagem: response.data.mensagem
       })
 
-      localStorage.setItem('token', JSON.stringify(response.data.token));
+      localStorage.setItem('token', (response.data.token));
 
       singIn(true);
       

@@ -12,7 +12,7 @@ function AuthProvider({children}){
 
         const getLogin = () => {
             const token = localStorage.getItem('token')
-            if (token) {
+            if (token && validatedToken()) {
                 api.defaults.headers.Authorization = `Bearer ${(token)}`;
                 setAuthenticated(true);
             }
@@ -22,6 +22,24 @@ function AuthProvider({children}){
         getLogin();
 
     }, []);
+
+    const validatedToken = async () => {
+        const valueToken = localStorage.getItem('token');
+        const headers = {
+            'headers': {'Authorization': 'Bearer ' + valueToken}
+        }
+
+        await api.get('/validaToken', headers)
+            .then( () => {
+                return true;
+            }).catch( () => {
+                setAuthenticated(false);
+                localStorage.removeItem('token');
+                api.defaults.headers.Authorization = undefined   
+                return false
+            })
+    }
+
 
     function singIn(state){
         setAuthenticated(true);
