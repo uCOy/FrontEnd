@@ -68,7 +68,6 @@ export function Login() {
           type: 'error',
           mensagem: 'Erro: tente mais tarde...'
       })
-
       if(err.response){
         // console.log(err.response);
         setStatus({
@@ -102,7 +101,15 @@ export function Login() {
           <Alert key={variant} variant={variant}>{status.mensagem}</Alert>: ""}
         </p>
       ))}
-                {status.loading ? <p>Validando...</p>: ""}
+      {[
+        'warning'
+      ].map((variant) => (
+        <p>
+          {status.loading ?
+        <Alert key={variant} variant={variant}> Validando... </Alert> : ""}
+        </p>
+      ))}
+                
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>
                   <Form.Control type="email" name="email" onChange={valorInput} placeholder="Enter email" />

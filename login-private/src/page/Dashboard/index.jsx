@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom'
-import { Context } from '../../Context/AuthContext'
+import { Context } from '../../Context/AuthContext';
+import { Nav, Navbar, Container, Button, Form } from 'react-bootstrap';
 
 export const Dashboard = () => {
     const token = localStorage.getItem('token');
@@ -11,17 +12,21 @@ export const Dashboard = () => {
 
     return(
         <div>
-            <ul>
-                <li>
-                    <Link to="/dashboard">Dashboard</Link>
-                </li>
-                <li>
-                    <Link to="/usuarios">Usuários</Link>
-                </li>
-            </ul>
+
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Navbar.Brand href="/dashboard">Menu Bala</Navbar.Brand>
+          <Nav className="me-auto">
+            <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+            <Nav.Link href="/usuarios">Usuarios</Nav.Link>
+          </Nav>
+          <Form>
+          <Button variant="outline-warning" type="button" onClick={handleLogout}>Sair</Button>
+          </Form>
+        </Container>
+      </Navbar>
             <h1>Dashboard</h1>
             {/* <h6>Token: {token}</h6> */}
-            <button type="button" onClick={handleLogout}>Sair</button>
         </div>
     )
 }

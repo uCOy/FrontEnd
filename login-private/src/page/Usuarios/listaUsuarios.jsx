@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import { Context } from '../../Context/AuthContext';
+import Table from 'react-bootstrap/Table';
+
+
+import { Nav, Navbar, Container, Button, Form } from 'react-bootstrap';
 
 export const ListaUsuarios = () => {
 
@@ -10,6 +15,8 @@ export const ListaUsuarios = () => {
         type:'',
         mensagem:''
     })
+
+    const { authenticated, handleLogout } = useContext(Context);
 
     const getUsers = async () => {
 
@@ -44,23 +51,41 @@ export const ListaUsuarios = () => {
 
     return(
         <div>
-            <ul>
-                <li>
-                    <Link to="/dashboard">Dashboard</Link>
-                </li>
-                <li>
-                    <Link to="/usuarios">Usuários</Link>
-                </li>
-            </ul>
+            <Navbar bg="dark" variant="dark">
+              <Container>
+                <Navbar.Brand href="/dashboard">Menu Bala</Navbar.Brand>
+                <Nav className="me-auto">
+                  <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                  <Nav.Link href="/usuarios">Usuarios</Nav.Link>
+                </Nav>
+                <Form>
+                <Button variant="outline-warning" type="button" onClick={handleLogout}>Sair</Button>
+                </Form>
+              </Container>
+            </Navbar>
+        
             <h1>Usuários</h1>
 
-            {data.map(user => (
-                <div key={user.id}>
-                    <div>{user.name}</div>
-                    <div>{user.email}</div>
-                    <hr/>
-                </div>
-            ))}
+            <Button variant="outline-success" href="/usuarios/novo">Novo</Button>{' '}
+
+            <Table striped bordered hover className="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {data.map(user => (
+                        <tr key={user.id}>
+                            <td>{user.id}</td>
+                            <td>{user.name}</td>
+                            <td>{user.email}</td>
+                        </tr>           
+                ))}
+                </tbody>
+      </Table>
         </div>
     )
 }

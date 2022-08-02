@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 
 import { Context } from '../Context/AuthContext';
 import { ListaUsuarios } from '../page/Usuarios/listaUsuarios';
+import { UsuariosForm } from '../page/UsuariosForm/UsuariosForm';
 
 import { Login } from '../components/Login/Login';
 import { Dashboard } from '../page/Dashboard/index';
@@ -22,6 +23,7 @@ export default function PrivateRoute(){
         <Switch>
               <CustomRoute exact path="/" component={Login} />
               <CustomRoute isPrivate path="/dashboard" component={Dashboard} />
+              <CustomRoute isPrivate path="/usuarios/novo" component={UsuariosForm} />
               <CustomRoute isPrivate path="/usuarios" component={ListaUsuarios} />
         </Switch>
     )
