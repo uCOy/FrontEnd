@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { Context } from '../../Context/AuthContext';
 import Table from 'react-bootstrap/Table';
+import './listaUsuarios.css'
 
 
 import { Nav, Navbar, Container, Button, Form } from 'react-bootstrap';
@@ -30,6 +31,7 @@ export const ListaUsuarios = () => {
         await api.get("/users", headers)
             .then( (response) => {
                 setData(response.data.users)
+                setStatus({loading: false})
             }).catch( (err) => {
                 if(err.response){
                     setStatus({
@@ -51,6 +53,7 @@ export const ListaUsuarios = () => {
 
     return(
         <div>
+            
             <Navbar bg="dark" variant="dark">
               <Container>
                 <Navbar.Brand href="/dashboard">Menu Bala</Navbar.Brand>
@@ -63,29 +66,39 @@ export const ListaUsuarios = () => {
                 </Form>
               </Container>
             </Navbar>
+            
         
-            <h1>Usuários</h1>
+            <h1 className="userCenter">Usuários</h1>
 
-            <Button variant="outline-success" href="/usuarios/novo">Novo</Button>{' '}
-
-            <Table striped bordered hover className="table">
-                <thead>
-                  <tr>
+            <Button className="buttonNew" variant="outline-success" href="/usuarios/novo">Novo</Button>{' '}
+<div className="table">
+            <Table striped bordered hover>
+                <tbody>
+                <tr>
                     <th>#</th>
                     <th>Nome</th>
                     <th>Email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {data.map(user => (
+                </tr>
+                {(!status.loading &&
+                data.map(user => (
                         <tr key={user.id}>
                             <td>{user.id}</td>
                             <td>{user.name}</td>
                             <td>{user.email}</td>
-                        </tr>           
-                ))}
+                            <td className="spaceFlex">
+                            <Button variant="outline-warning">
+                                <Link className="noLink" to={"/usuarios/editar/"+user.id}>Editar</Link>
+                            </Button>
+                            <Button variant="outline-danger" onClick={() => handleDelete(user.id)}>
+                                Excluir
+                            </Button>
+                            </td>
+                        </tr> 
+                ))
+                )}          
                 </tbody>
       </Table>
+      </div>
         </div>
     )
 }

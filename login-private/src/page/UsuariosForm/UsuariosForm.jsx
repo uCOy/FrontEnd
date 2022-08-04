@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import api from '../../services/api';
 import { Link, useHistory } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
@@ -16,10 +16,12 @@ const initialValue = {
     password: ''
 }
 
-export const UsuariosForm = () => {
+export const UsuariosForm = (props) => {
 
     const history = useHistory();
 
+    const [id] = useState(props.match.params.id);
+    
     const [values, setValues] = useState(initialValue);
     const [acao, setAcao] = useState('Novo');
     const [status, setStatus] = useState({
@@ -36,6 +38,48 @@ export const UsuariosForm = () => {
         [e.target.name]: e.target.value
     })
 
+    useEffect( () => {
+
+      const getUser = async () => {
+
+        const valueToken = localStorage.getItem('token');
+        const headers = {
+            'headers': {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + valueToken
+            }
+        }
+
+        await api.get("/user/"+id, headers)
+            .then( (response) => {
+                if(response.data.users){
+                  setValues(response.data.users);
+                  setAcao('Editar')
+                } else {
+                  setStatus({
+                    type: 'warning',
+                    mensagem:'Usuário não encontrado!!!'
+                  })
+                } 
+                // setData(response.data.users)
+            }).catch( (err) => {
+                if(err.response){
+                    setStatus({
+                        type:'error',
+                        mensagem: err.response.data.mensagem
+                    })
+                } else {
+                    setStatus({
+                        type:'error',
+                        mensagem: 'Erro: tente mais tarde.....!'
+                    })
+                }
+            })
+    }
+    
+    if(id) getUser();
+    }, [id])
+
     const formSubmit = async e => {
         e.preventDefault();
         setStatus({ loading: true });
@@ -46,31 +90,55 @@ export const UsuariosForm = () => {
             'headers': {'Authorization': 'Bearer ' + valueToken}
         }
 
-        await api.post("/user", values, headers)
-            .then( (response) => {
-                    console.log(response);
-                    setStatus({loading: false});
-                    return history.push('/usuarios')
-                }).catch( (err) => {
-                    if(err.response){
-                        setStatus({
-                            type: 'error',
-                            mensagem: err.response.data.mensagem,
-                            loading: false
-                        })
-                    } else {
-                        setStatus({
-                            type: 'error',
-                            mensagem: 'Erro: tente mais tarde...',
-                            loading: false
-                        })                
-                    }  
-                })
+        if(!id){
+
+          await api.post("/user", values, headers)
+              .then( (response) => {
+                      console.log(response);
+                      setStatus({loading: false});
+                      return history.push('/usuarios')
+                  }).catch( (err) => {
+                      if(err.response){
+                          setStatus({
+                              type: 'error',
+                              mensagem: err.response.data.mensagem,
+                              loading: false
+                          })
+                      } else {
+                          setStatus({
+                              type: 'error',
+                              mensagem: 'Erro: tente mais tarde...',
+                              loading: false
+                          })                
+                      }  
+                  })
+        } else {
+          await api.put("/user", values, headers)
+              .then( (response) => {
+                      console.log(response);
+                      setStatus({loading: false});
+                      return history.push('/usuarios')
+                  }).catch( (err) => {
+                      if(err.response){
+                          setStatus({
+                              type: 'error',
+                              mensagem: err.response.data.mensagem,
+                              loading: false
+                          })
+                      } else {
+                          setStatus({
+                              type: 'error',
+                              mensagem: 'Erro: tente mais tarde...',
+                              loading: false
+                          })                
+                      }  
+                  })
+        }
     }
 
     return(
-        <div>
-            <Navbar bg="dark" variant="dark">
+        <div>    
+             <Navbar bg="dark" variant="dark">
               <Container>
                 <Navbar.Brand href="/dashboard">Menu Bala</Navbar.Brand>
                 <Nav className="me-auto">
@@ -82,9 +150,8 @@ export const UsuariosForm = () => {
                 </Form>
               </Container>
             </Navbar>
-
             <Container className="box">
-              <h1>Usuários</h1>
+              <h1>{acao} Usuário</h1>
               <Form onSubmit={formSubmit} className="borderForm">
                 {/* {status.type == 'error' ? <p>{status.mensagem}</p>: ""} */}
                 {/* {status.type == 'success' ? <p>{status.mensagem}</p>: ""} */}
@@ -112,22 +179,23 @@ export const UsuariosForm = () => {
                 
                 <Form.Group className="mb-3" controlId="formBasicName">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control type="text" name="name" onChange={valorInput} placeholder="Enter Name" />
+                  <Form.Control type="text" name="name" value={values.name} onChange={valorInput} placeholder="Enter Name" />
                 </Form.Group>  
 
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>
-                  <Form.Control type="email" name="email" onChange={valorInput} placeholder="Enter email" />
+                  <Form.Control type="email" name="email" value={values.email} onChange={valorInput} placeholder="Enter email" />
                   <Form.Text className="text-muted">
                     We'll never share your email with anyone else.
                     {/* Nunca compartilharemos seu e-mail com mais ninguém */}
                   </Form.Text>
                 </Form.Group>
-      
+                {!id &&
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" name="password" onChange={valorInput} placeholder="Password" />
+                  <Form.Control type="password" name="password" value={values.password} onChange={valorInput} placeholder="Password" />
                 </Form.Group>
+                }
                 <Form.Group className="mb-3" controlId="formBasicCheckbox">
                   <Form.Check type="checkbox" label="Check me out" />
                 </Form.Group>
