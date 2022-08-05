@@ -1,11 +1,13 @@
 .buttonNew{
     display: flex;
-    align-items: center;
-    justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    margin-left: 20px;
-    width: 100%;
+}
+
+.buttonDiv{
+    display: flex;
+    justify-content:center;
+    align-items: center;
 }
 
 .userCenter{
@@ -22,7 +24,12 @@
 .table{
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
     align-items: center;
-    /* margin-right: 20px; */
+}
+.noLink{
+    margin-right: 20px;
+}
+
+.onLink{
+    text-decoration: none;
 }

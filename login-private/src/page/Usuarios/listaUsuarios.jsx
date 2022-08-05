@@ -5,19 +5,50 @@ import { Context } from '../../Context/AuthContext';
 import Table from 'react-bootstrap/Table';
 import './listaUsuarios.css'
 
-
 import { Nav, Navbar, Container, Button, Form } from 'react-bootstrap';
 
 export const ListaUsuarios = () => {
 
     const [data, setData] = useState([]);
 
+    const { authenticated, handleLogout } = useContext(Context);
+
     const [status, setStatus] = useState({
         type:'',
         mensagem:''
     })
 
-    const { authenticated, handleLogout } = useContext(Context);
+    const handleDelete = async (idUser) => {
+        // console.log(idUser);
+
+        const valueToken = localStorage.getItem('token');
+        const headers = {
+            'headers': {
+                'Authorization': 'Bearer ' + valueToken
+            }
+        }
+
+        await api.delete("/user/"+idUser, headers)
+        .then( (response) => {
+            setStatus({
+                type: 'sucess',
+                mensagem: response.data.mensagem
+            })
+            getUsers();
+        }).catch( (err) => {
+            if(err.response){
+                setStatus({
+                    type:'error',
+                    mensagem: err.response.data.mensagem
+                })
+            } else {
+                setStatus({
+                    type:'error',
+                    mensagem: 'Erro: tente mais tarde...'
+                })
+            }
+        })
+    }
 
     const getUsers = async () => {
 
@@ -70,7 +101,9 @@ export const ListaUsuarios = () => {
         
             <h1 className="userCenter">Usuários</h1>
 
-            <Button className="buttonNew" variant="outline-success" href="/usuarios/novo">Novo</Button>{' '}
+            <div className="buttonDiv">
+                <Button className="buttonNew" variant="outline-success" href="/usuarios/novo">Novo Usuario</Button>{' '}
+            </div>
 <div className="table">
             <Table striped bordered hover>
                 <tbody>
@@ -86,8 +119,8 @@ export const ListaUsuarios = () => {
                             <td>{user.name}</td>
                             <td>{user.email}</td>
                             <td className="spaceFlex">
-                            <Button variant="outline-warning">
-                                <Link className="noLink" to={"/usuarios/editar/"+user.id}>Editar</Link>
+                            <Button className="noLink" variant="outline-warning">
+                                <Link className="onLink" to={"/usuarios/editar/"+user.id}>Editar</Link>
                             </Button>
                             <Button variant="outline-danger" onClick={() => handleDelete(user.id)}>
                                 Excluir
