@@ -4,6 +4,7 @@ import api from '../../services/api';
 import { Context } from '../../Context/AuthContext';
 import Table from 'react-bootstrap/Table';
 import './listaUsuarios.css'
+import { confirmAlert } from 'react-confirm-alert';
 
 import { Nav, Navbar, Container, Button, Form } from 'react-bootstrap';
 
@@ -17,6 +18,26 @@ export const ListaUsuarios = () => {
         type:'',
         mensagem:''
     })
+
+    const confirmDelete = (user) => {
+        confirmAlert({
+          title: "CAUTION !!!!",
+          message:
+            "Are you absolutely sure you want to delete section " +
+            user.id +
+            "?",
+          buttons: [
+            {
+              label: "Yes",
+              onClick: () => handleDelete(user.id)
+            },
+            {
+              label: "No",
+              onClick: () => history.push("/usuarios")
+            }
+          ]
+        });
+      };
 
     const handleDelete = async (idUser) => {
         // console.log(idUser);
@@ -122,7 +143,7 @@ export const ListaUsuarios = () => {
                             <Button className="noLink" variant="outline-warning">
                                 <Link className="onLink" to={"/usuarios/editar/"+user.id}>Editar</Link>
                             </Button>
-                            <Button variant="outline-danger" onClick={() => handleDelete(user.id)}>
+                            <Button variant="outline-danger" onClick={() => confirmDelete(user)}>
                                 Excluir
                             </Button>
                             </td>
